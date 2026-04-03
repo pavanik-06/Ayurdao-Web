@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AyurDAO - Consumer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🛒 Consumer Dashboard</h1>
+
+    <label>Enter Product ID</label>
+    <input type="number" id="productId" placeholder="e.g. 1">
+
+    <button onclick="trackProduct()">Track on Blockchain</button>
+
+    <div class="result" id="result">
+
+      <h2>Supply Chain Timeline</h2>
+
+      <!-- ✅ Verification -->
+      <div id="verificationStatus" style="margin-bottom:10px;"></div>
+
+      <!-- ⭐ Trust Score -->
+      <div id="trustScore" style="margin-bottom:15px; font-weight:bold;"></div>
+
+      <!-- Timeline -->
+      <div id="timeline"></div>
+
+      <!-- Digital Twin -->
+      <div class="digital-twin" id="digitalTwin">
+        <h3>🌿 Digital Twin — Ashwagandha</h3>
+        <p><strong>Scientific Name:</strong> Withania somnifera</p>
+        <p><strong>Origin:</strong> Tamil Nadu, India</p>
+        <p><strong>Uses:</strong> Stress relief, immunity booster, energy enhancer</p>
+        <p><strong>Benefits:</strong> Anti-inflammatory, adaptogenic, antioxidant</p>
+        <p><strong>Recommended Dose:</strong> 300–500mg per day</p>
+        <p><strong>Certifications:</strong> Ayush certified, GMP compliant</p>
+      </div>
+
+    </div>
+
+    <a class="nav-link" href="login.html">← Back to Login</a>
+  </div>
+
+  <script>
+    async function trackProduct() {
+      const id = document.getElementById('productId').value;
+
+      if (!id) {
+        alert('Please enter a Product ID!');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/getProduct/${id}`);
+      const result = await response.json();
+
+      if (!result.chain) {
+        alert('Product not found! Check the ID.');
+        return;
+      }
+
+      let timelineHTML = '';
+
+      // ✅ Verification variables
+      let hasFarmer = false;
+      let hasManufacturer = false;
+
+      result.chain.forEach(block => {
+
+        // Detect stages
+        if (block.data.status === "Harvested") hasFarmer = true;
+        if (block.data.status === "Processed") hasManufacturer = true;
+
+        const status = block.data.status;
+
+        let badgeClass = 'status-harvested';
+        if (status === 'Processed' || status === 'Packed') badgeClass = 'status-processed';
+        if (status === 'Quality Checked' || status === 'Ready to Ship') badgeClass = 'status-checked';
+
+        timelineHTML += `
+          <div class="block">
+            <p><strong>Block #${block.index}</strong> 
+               <span class="status-badge ${badgeClass}">${status}</span>
+            </p>
+            <p><strong>Herb:</strong> ${block.data.name}</p>
+            <p><strong>Farmer:</strong> ${block.data.farmer || 'N/A'}</p>
+            <p><strong>Location:</strong> ${block.data.location || 'N/A'}</p>
+            <p><strong>Quantity:</strong> ${block.data.qty || 'N/A'} kg</p>
+            <p><strong>Manufacturer:</strong> ${block.data.manufacturer || 'Not yet processed'}</p>
+            <p><strong>Time:</strong> ${new Date(block.timestamp).toLocaleString()}</p>
+            <details style="margin-top:8px">
+              <summary style="cursor:pointer; color:#2d7a2d; font-size:12px; font-weight:600;">
+                View Blockchain Technical Details
+              </summary>
+              <p class="hash"><strong>Hash:</strong> ${block.hash}</p>
+            </details>
+          </div>
+        `;
+      });
+
+      // ✅ VERIFICATION LOGIC
+      if (!hasFarmer) {
+        document.getElementById('verificationStatus').innerHTML =
+          `<div style="color:red; font-weight:bold;">🚨 Fake Product Detected! No origin found</div>`;
+      }
+      else if (hasFarmer && !hasManufacturer) {
+        document.getElementById('verificationStatus').innerHTML =
+          `<div style="color:orange; font-weight:bold;">⚠️ Suspicious Product (Incomplete supply chain)</div>`;
+      }
+      else {
+        document.getElementById('verificationStatus').innerHTML =
+          `<div style="color:green; font-weight:bold;">✅ Verified Authentic Product</div>`;
+      }
+
+      // ⭐ TRUST SCORE
+      let score = 0;
+
+      if (!hasFarmer) {
+        score = 0;
+      }
+      else if (hasFarmer && !hasManufacturer) {
+        score = 50;
+      }
+      else {
+        score = 100;
+      }
+
+      let color = "red";
+      if (score === 50) color = "orange";
+      if (score === 100) color = "green";
+
+      document.getElementById('trustScore').innerHTML =
+        `<div style="color:${color}; font-size:18px;">
+          ⭐ Trust Score: ${score}%
+        </div>`;
+
+      // ✅ Show timeline
+      document.getElementById('timeline').innerHTML = timelineHTML;
+      document.getElementById('result').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
