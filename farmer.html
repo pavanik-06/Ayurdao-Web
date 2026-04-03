@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AyurDAO - Farmer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🌾 Farmer Dashboard</h1>
+
+    <label>Farmer Name</label>
+    <input type="text" id="farmer" placeholder="Enter your name">
+
+    <label>Herb Name</label>
+    <input type="text" id="name" value="Ashwagandha" readonly>
+
+    <label>Location</label>
+    <input type="text" id="location" placeholder="e.g. Coimbatore, Tamil Nadu">
+
+    <label>Harvest Date</label>
+    <input type="date" id="date">
+
+    <label>Quantity (kg)</label>
+    <input type="number" id="qty" placeholder="e.g. 50">
+
+    <button onclick="addProduct()">Add Product to Blockchain</button>
+
+    <div class="result" id="result">
+      <h2>Product Added!</h2>
+      <p><strong>Product ID:</strong> <span id="productId"></span></p>
+      <p><strong>Status:</strong> <span class="status-badge status-harvested">Harvested</span></p>
+      <p style="margin-top:10px; font-size:13px; color:#666;">
+        Share this Product ID with the Manufacturer
+      </p>
+      <div class="qr-box">
+  <p><strong>Consumer scans this QR to view full product history:</strong></p>
+  <img id="qrCode" src="" alt="QR Code">
+  <p id="qrLink" style="font-size:12px; margin-top:8px;"></p>
+</div>
+      <div class="block" id="blockInfo"></div>
+    </div>
+
+    <a class="nav-link" href="login.html">← Back to Login</a>
+  </div>
+
+  <script>
+    async function addProduct() {
+      const farmer   = document.getElementById('farmer').value;
+      const name     = document.getElementById('name').value;
+      const location = document.getElementById('location').value;
+      const date     = document.getElementById('date').value;
+      const qty      = document.getElementById('qty').value;
+
+      if (!farmer || !location || !date || !qty) {
+        alert('Please fill all fields!');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/addProduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ farmer, name, location, date, qty })
+      });
+
+      const result = await response.json();
+
+      document.getElementById('productId').textContent = result.productId;
+      document.getElementById('qrCode').src = result.qrCode;
+      document.getElementById('blockInfo').innerHTML = `
+        <p><strong>Block Index:</strong> ${result.block.index}</p>
+        <p><strong>Timestamp:</strong> ${result.block.timestamp}</p>
+        <details style="margin-top:8px">
+          <summary style="cursor:pointer; color:#2d7a2d; font-size:12px; font-weight:600;">
+            View Blockchain Technical Details
+          </summary>
+          <p class="hash"><strong>Hash:</strong> ${result.block.hash}</p>
+          <p class="hash"><strong>Prev Hash:</strong> ${result.block.previousHash}</p>
+        </details>
+      `;
+
+      document.getElementById('result').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

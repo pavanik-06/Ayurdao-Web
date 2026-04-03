@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AyurDAO - All Products</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">🌿 AyurDAO</div>
+    <div class="tagline">All Products</div>
+    <div class="nav-role">Blockchain Ledger</div>
+  </nav>
+
+  <div class="page-header">
+    <h1>All Products on Blockchain</h1>
+    <p>Every herb recorded on the AyurDAO blockchain ledger</p>
+  </div>
+
+  <div class="container">
+
+    <!-- BLOCKCHAIN VISUALIZATION -->
+    <div class="card" style="margin-bottom:24px">
+      <h2 style="color:var(--green); margin-bottom:16px;">
+        Blockchain Visualization
+      </h2>
+      <div class="chain-viz" id="chainViz">
+        <p style="color:#aaa; font-size:14px;">Loading blockchain...</p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TABLE -->
+    <div class="card">
+      <h2 style="color:var(--green); margin-bottom:16px;">
+        Products List
+      </h2>
+      <div id="productsContainer">
+        <p style="color:#aaa; font-size:14px;">Loading products...</p>
+      </div>
+    </div>
+
+    <a class="nav-link" href="login.html">← Back to Home</a>
+
+  </div>
+
+  <footer class="footer">
+    <p><span>AyurDAO</span> — Transparent Ayurvedic Supply Chain</p>
+  </footer>
+
+  <script>
+    async function loadProducts() {
+      try {
+        const response = await fetch('http://localhost:3000/getAllProducts');
+        const data = await response.json();
+        const products = data.products;
+
+        if (!products || products.length === 0) {
+          document.getElementById('chainViz').innerHTML =
+            '<p style="color:#aaa;font-size:14px;">No products added yet. Login as Farmer to add one!</p>';
+          document.getElementById('productsContainer').innerHTML =
+            '<p style="color:#aaa;font-size:14px;">No products found.</p>';
+          return;
+        }
+
+        // BLOCKCHAIN VISUALIZATION
+        let chainHTML = '';
+        products.forEach((block, index) => {
+          chainHTML += `
+            <div class="chain-block">
+              <div class="block-header">
+                <span class="block-num">Block #${block.index}</span>
+                <span style="font-size:11px; color:#aaa">${new Date(block.timestamp).toLocaleString()}</span>
+              </div>
+              <p><strong>Herb:</strong> ${block.data.name} &nbsp;|&nbsp;
+                 <strong>Status:</strong> ${block.data.status} &nbsp;|&nbsp;
+                 <strong>Farmer:</strong> ${block.data.farmer || 'N/A'}
+              </p>
+              <details style="margin-top:6px">
+                <summary style="cursor:pointer; color:#1a6b3c; font-size:11px; font-weight:600;">
+                  View Hashes
+                </summary>
+                <p class="hash">Hash: ${block.hash}</p>
+                <p class="hash">Prev: ${block.previousHash}</p>
+              </details>
+            </div>
+          `;
+          if (index < products.length - 1) {
+            chainHTML += `<div class="chain-arrow">↓ linked to next block</div>`;
+          }
+        });
+        document.getElementById('chainViz').innerHTML = chainHTML;
+
+        // PRODUCTS TABLE
+        let tableHTML = `
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Herb</th>
+                <th>Farmer</th>
+                <th>Location</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        products.forEach(block => {
+          const status = block.data.status;
+          let badgeClass = 'status-harvested';
+          if (status === 'Processed' || status === 'Packed')
+            badgeClass = 'status-processed';
+          if (status === 'Quality Checked' || status === 'Ready to Ship')
+            badgeClass = 'status-checked';
+
+          tableHTML += `
+            <tr>
+              <td><strong>#${block.index}</strong></td>
+              <td>${block.data.name}</td>
+              <td>${block.data.farmer || 'N/A'}</td>
+              <td>${block.data.location || 'N/A'}</td>
+              <td>${block.data.qty || 'N/A'} kg</td>
+              <td><span class="status-badge ${badgeClass}">${status}</span></td>
+              <td>
+                <a href="consumer.html" 
+                   onclick="localStorage.setItem('trackId','${block.index}')"
+                   style="color:#1a6b3c; font-weight:600; font-size:13px;">
+                  Track →
+                </a>
+              </td>
+            </tr>
+          `;
+        });
+        tableHTML += '</tbody></table>';
+        document.getElementById('productsContainer').innerHTML = tableHTML;
+
+      } catch (err) {
+        document.getElementById('chainViz').innerHTML =
+          '<p style="color:red">Could not connect to server. Make sure server is running!</p>';
+      }
+    }
+
+    loadProducts();
+  </script>
+
+</body>
+</html>

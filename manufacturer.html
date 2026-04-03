@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AyurDAO - Manufacturer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🏭 Manufacturer Dashboard</h1>
+
+    <label>Manufacturer Name</label>
+    <input type="text" id="manufacturer" placeholder="Enter your company name">
+
+    <label>Product ID (given by Farmer)</label>
+    <input type="number" id="productId" placeholder="e.g. 1">
+
+    <label>Update Status</label>
+    <select id="status">
+      <option value="Processed">Processed</option>
+      <option value="Quality Checked">Quality Checked</option>
+      <option value="Packed">Packed</option>
+      <option value="Ready to Ship">Ready to Ship</option>
+    </select>
+
+    <button onclick="updateProduct()">Update on Blockchain</button>
+
+    <div class="result" id="result">
+      <h2>Status Updated!</h2>
+      <p id="resultMessage"></p>
+      <a class="nav-link" href="manufacturer.html">Update Another Product</a>
+    </div>
+
+    <a class="nav-link" href="login.html">← Back to Login</a>
+  </div>
+
+  <script>
+    async function updateProduct() {
+      const manufacturer = document.getElementById('manufacturer').value;
+      const id           = document.getElementById('productId').value;
+      const status       = document.getElementById('status').value;
+
+      if (!manufacturer || !id) {
+        alert('Please fill all fields!');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/updateProduct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ manufacturer, id, status })
+      });
+
+      const result = await response.json();
+
+      document.getElementById('resultMessage').textContent = result.message;
+      document.getElementById('result').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AyurDAO - Blockchain Supply Chain</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">🌿 AyurDAO</div>
+    <div class="tagline">Blockchain · Ayurveda · Trust</div>
+    <div class="nav-role">Decentralized Platform</div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>AyurDAO</h1>
+    <p>A blockchain-powered traceability platform for the Ayurvedic supply chain — from farmer to consumer, every step recorded, verified and transparent.</p>
+    <div class="hero-btns">
+      <a href="#login" class="btn-primary">Enter Platform</a>
+      <a href="#about" class="btn-outline">Learn More</a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="num">100%</div>
+      <div class="label">Transparent</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">SHA-256</div>
+      <div class="label">Blockchain Hash</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">3</div>
+      <div class="label">Stakeholders</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">QR</div>
+      <div class="label">Scan to Track</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features" id="about">
+    <h2>Why AyurDAO?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🔗</div>
+        <h3>Blockchain Secured</h3>
+        <p>Every transaction is recorded as an immutable block with SHA-256 hashing — tamper-proof and transparent.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📦</div>
+        <h3>Full Traceability</h3>
+        <p>Track your herb from the farm in Tamil Nadu all the way to the final product in your hands.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌿</div>
+        <h3>Digital Twin</h3>
+        <p>Each herb has a digital twin with medicinal benefits, origin, dosage and certification data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📱</div>
+        <h3>QR Code Tracking</h3>
+        <p>Scan the QR code on any product with your phone to instantly view its complete supply chain history.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="circle">1</div>
+        <p>Farmer harvests herb and adds it to blockchain</p>
+      </div>
+      <div class="step">
+        <div class="circle">2</div>
+        <p>Manufacturer processes and updates the block</p>
+      </div>
+      <div class="step">
+        <div class="circle">3</div>
+        <p>Consumer scans QR code to view full history</p>
+      </div>
+      <div class="step">
+        <div class="circle">4</div>
+        <p>Digital twin shows benefits and authenticity</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <h2>About AyurDAO</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>The Problem</h3>
+        <p>The Ayurvedic industry faces serious challenges — adulteration, lack of transparency and fragmented supply chain records reduce consumer trust and product authenticity.</p>
+      </div>
+      <div class="about-card">
+        <h3>Our Solution</h3>
+        <p>AyurDAO uses blockchain technology to record every step of the supply chain as an immutable, time-stamped block — ensuring complete transparency from farm to shelf.</p>
+      </div>
+      <div class="about-card">
+        <h3>The Technology</h3>
+        <p>Built on a custom blockchain with SHA-256 hashing, RESTful APIs, QR code generation and a Digital Twin framework for personalized herb information.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section class="login-section" id="login">
+    <div class="card">
+      <h2>🔐 Enter Platform</h2>
+      <label>Select Your Role</label>
+      <select id="role">
+        <option value="">-- Select Role --</option>
+        <option value="farmer">🌾 Farmer</option>
+        <option value="manufacturer">🏭 Manufacturer</option>
+        <option value="consumer">🛒 Consumer</option>
+      </select>
+      <button onclick="login()">Enter Dashboard</button>
+      <a class="nav-link" href="products.html">View All Products</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Built with blockchain technology for the Ayurvedic ecosystem</p>
+    <p style="margin-top:6px"><span>AyurDAO</span> — Final Year Project · Chennai, Tamil Nadu</p>
+  </footer>
+
+  <script>
+    function login() {
+      const role = document.getElementById('role').value;
+      if (role === 'farmer') window.location.href = 'farmer.html';
+      else if (role === 'manufacturer') window.location.href = 'manufacturer.html';
+      else if (role === 'consumer') window.location.href = 'consumer.html';
+      else alert('Please select a role first!');
+    }
+  </script>
+
+</body>
+</html>
